@@ -1,5 +1,8 @@
-# Introduce
+# Introduction
 This is a simple application that implement P2P communication by TCP.
+There two third-party packages used in this application:
++ [reuseport](https://github.com/libp2p/go-reuseport) : used to bind more then one socket connect into a same port
++ [tsgutils](https://github.com/typa01/go-utils) : used to generate unique node id (GUID format)
 
 # Useage
 After build this application, you will get a executable file "p2pwithtcp", the useage listed below:
@@ -22,4 +25,3 @@ const (
 	ORDINARY_NODE_PORT     = 8881
 )
 ```
-# 
