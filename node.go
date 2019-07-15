@@ -34,7 +34,9 @@ type Peer struct {
 }
 
 const (
-	TRACKER_ADDRESS = "127.0.0.1:8880"
+	REMOTE_TRACKER_ADDRESS = "127.0.0.1:8880"
+	LOCAL_TRACKER_ADDRESS  = "0.0.0.0:8880"
+	ORDINARY_NODE_PORT     = 8881
 )
 
 var (
@@ -90,7 +92,7 @@ func connect(remotAddress string) {
 
 		go readData(peers[address])
 
-		if remotAddress == TRACKER_ADDRESS {
+		if remotAddress == REMOTE_TRACKER_ADDRESS {
 			cmdQueue <- Cmd{conn, peers[address].Writer, NewCommand(nodeID, GetAddr, "")}
 		}
 	}
@@ -129,11 +131,7 @@ func readData(peer *Peer) {
 			//log.Println("Client disconnected")
 
 			break
-		} /*else if data != "" && data != "\n" {
-			cmdQueue <- Cmd{peer.Conn, data}
-			log.Println("Received Data:", data)
-		}*/
-		//log.Printf("state: 0x%02X, byte:0x%02X\n", state, recvByte)
+		}
 
 		switch state {
 		case 0x00:
@@ -300,7 +298,7 @@ func sendHeartbeat() {
 
 func main() {
 	tracker = flag.Bool("tracker", false, "Run as a tracker server")
-	port = flag.Int("port", 8881, "Source port number")
+	port = flag.Int("port", ORDINARY_NODE_PORT, "Source port number")
 	flag.Parse()
 
 	cmdQueue = make(chan Cmd, math.MaxInt16)
@@ -309,7 +307,7 @@ func main() {
 
 	localAddress = ":" + strconv.Itoa(*port)
 	if *tracker {
-		localAddress = TRACKER_ADDRESS
+		localAddress = LOCAL_TRACKER_ADDRESS
 	}
 
 	server, err = reuse.Listen("tcp", localAddress)
@@ -321,7 +319,7 @@ func main() {
 	go writeData()
 
 	if !*tracker {
-		go connect(TRACKER_ADDRESS)
+		go connect(REMOTE_TRACKER_ADDRESS)
 	}
 
 	go sendHeartbeat()
