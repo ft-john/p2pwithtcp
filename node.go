@@ -297,8 +297,8 @@ func sendHeartbeat() {
 }
 
 func main() {
-	tracker = flag.Bool("tracker", false, "Run as a tracker server")
-	port = flag.Int("port", ORDINARY_NODE_PORT, "Source port number")
+	tracker = flag.Bool("tracker", false, "Run as a tracker mode, if not contain this parameter will run as ordinary mode")
+	port = flag.Int("port", ORDINARY_NODE_PORT, "Source port number of a ordinary node")
 	flag.Parse()
 
 	cmdQueue = make(chan Cmd, math.MaxInt16)
